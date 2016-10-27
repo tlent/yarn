@@ -32,10 +32,16 @@ export async function run(
   const rootManifests = await config.getRootManifests();
   const manifests = [];
 
-  for (const name of args) {
+  for (let name of args) {
     reporter.step(++step, totalSteps, `Removing module ${name}`);
 
     let found = false;
+
+    // handles github shorthand
+    // see: https://github.com/yarnpkg/yarn/issues/1506
+    if (name.indexOf('/') > -1) {
+      name = name.split('/').pop();
+    }
 
     for (const registryName of Object.keys(registries)) {
       const registry = config.registries[registryName];
